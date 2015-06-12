@@ -9,6 +9,7 @@ import time
 
 
 class InterfaceGauche(LabelFrame):
+    '''Left frame of the GUI, giving the buttons and the current price and winner'''
     def __init__(self, tk_frame, waiting_time, **kwargs):
         LabelFrame.__init__(self, tk_frame, text="Tirage", **kwargs)
         self.waiting_time = waiting_time
@@ -46,6 +47,7 @@ class InterfaceGauche(LabelFrame):
             self.grid_columnconfigure(i, weight=1)
 
     def click(self):
+        '''When click is selected, the tombola starts'''
         parent_name = self.winfo_parent()
         parent = self._nametowidget(parent_name)
         parent.draw_tombola(self.waiting_time)
@@ -57,6 +59,7 @@ class InterfaceGauche(LabelFrame):
 
 
 class TableResults(LabelFrame):
+    '''Right frame of the GUI, giving the results of the already won prices'''
     def __init__(self, tk_frame, **kwargs):
         LabelFrame.__init__(self, tk_frame, text="Resultats", **kwargs)
         self.names_title = Label(self, text="Nom")
@@ -73,6 +76,7 @@ class TableResults(LabelFrame):
 
 
 class FenetreTombola(Tk):
+    '''Main window containing the 2 frames'''
     def __init__(self, names, prices, waiting_time, **kwargs):
         Tk.__init__(self, **kwargs)
         # self.geometry("810x520")
@@ -113,7 +117,7 @@ class FenetreTombola(Tk):
 
 if __name__ == "__main__":
     list_names = tombola.import_lists("Contacts.csv")
-    list_prices = ['pen', 'bag', 'wallet']
-    frame = FenetreTombola(list_names, list_prices, 10)
+    list_prices = ['pen', 'bag', 'wallet'] # To be corrected to import it from a csv too
+    frame = FenetreTombola(list_names, list_prices, 10) # The waiting time shall be parametrisable in the gui
 
     frame.mainloop()
