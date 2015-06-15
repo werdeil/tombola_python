@@ -39,6 +39,17 @@ def import_lists(csv_file):
                 list_names.append("%s %s" % (row['Prenom'], row['Nom']))
 
         return list_names
+        
+def import_prices(csv_file):
+    '''Read a csv file and return the list of prices'''
+    with open(csv_file) as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=";")
+        list_prices = []
+        for row in reader:
+            if row['Price'] != "":
+                list_prices.append(row['Price'])
+
+        return list_prices
 
 
 def write_results(save_file, name, objet):
