@@ -8,12 +8,12 @@ import csv
 
 
 def random_select(list_names):
-    '''Return a name choosen randomly from the list'''
+    """Return a name chosen randomly from the list"""
     return random.choice(list_names)
 
 
 def draw_prices(list_prices, list_names):
-    '''For each price of the list_prices, draw a name from list_names'''
+    """For each price of the list_prices, draw a name from list_names"""
     for price in list_prices:
         if len(list_names) == 0:
             raise ValueError("Too many prices, not enough people")
@@ -23,14 +23,14 @@ def draw_prices(list_prices, list_names):
 
 
 def draw_name(list_names):
-    '''Return a name choosen randomly from the list and the list without the name'''
+    """Return a name chosen randomly from the list and the list without the name"""
     random.shuffle(list_names)
     name = list_names.pop(0)
     return name, list_names
 
 
 def import_lists(csv_file):
-    '''Read a csv file and return the list of names'''
+    """Read a csv file and return the list of names"""
     with open(csv_file) as csvfile:
         reader = csv.DictReader(csvfile, delimiter=";")
         list_names = []
@@ -40,8 +40,9 @@ def import_lists(csv_file):
 
         return list_names
         
+
 def import_prices(csv_file):
-    '''Read a csv file and return the list of prices'''
+    """Read a csv file and return the list of prices"""
     with open(csv_file) as csvfile:
         reader = csv.DictReader(csvfile, delimiter=";")
         list_prices = []
@@ -53,7 +54,7 @@ def import_prices(csv_file):
 
 
 def write_results(save_file, name, objet):
-    '''Save the result of the tombola in a file'''
+    """Save the result of the tombola in a file"""
     save_file = open(save_file, 'a')
     save_file.write("%s;%s\n" % (name, objet))
     save_file.close()
