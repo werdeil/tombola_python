@@ -35,8 +35,8 @@ def import_lists(csv_file):
         reader = csv.DictReader(csvfile, delimiter=";")
         list_names = []
         for row in reader:
-            if row['Prenom'] != "":
-                list_names.append("%s %s" % (row['Prenom'], row['Nom']))
+            if row['Nom'] != "":
+                list_names.append(row['Nom'])
 
         return list_names
         
