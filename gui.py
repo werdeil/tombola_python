@@ -13,9 +13,9 @@ import time
 
 class InterfaceGauche(LabelFrame):
     """Left frame of the GUI, giving the buttons and the current price and winner"""
-    def __init__(self, tk_frame, waiting_time, **kwargs):
+    def __init__(self, tk_frame, **kwargs):
         LabelFrame.__init__(self, tk_frame, text="Tirage", **kwargs)
-        self.waiting_time = waiting_time
+        self.waiting_time = 10
 
         self.message = Label(self, text="Appuyez sur le bouton pour lancer le tirage")
         self.message.grid(column=0, row=0, columnspan=2)
@@ -28,19 +28,19 @@ class InterfaceGauche(LabelFrame):
         self.bouton_cliquer.grid(column=1, row=1)
 
         self.message_price = Label(self, text="Tirage pour:")
-        self.price = Label(self, text='', bg="white", width=30, height=1)
-        self.message_price.grid(column=0, row=2)
-        self.price.grid(column=1, row=2, columnspan=1, padx=10, pady=10)
+        self.price = Label(self, text='', bg="white", width=40, height=1)
+        self.message_price.grid(column=0, row=3)
+        self.price.grid(column=1, row=3, columnspan=1, padx=10, pady=10)
 
         self.message_name = Label(self, text="Le gagnant est:")
-        self.name = Label(self, text="", bg="white", width=30, height=1)
+        self.name = Label(self, text="", bg="white", width=40, height=1)
         self.message_name.grid(column=0, row=4)
         self.name.grid(column=1, row=4, columnspan=1, pady=10)
         
         self.parent_name = self.winfo_parent()
         self.parent = self._nametowidget(self.parent_name)
 
-        # partie sablier
+        # Part waiting time
         self.interval = Label(self, text="Intervalle entre tirages (s)")
         self.interval.grid(column=0, row=6, columnspan=1)
         self.v = StringVar()
@@ -59,8 +59,8 @@ class InterfaceGauche(LabelFrame):
         self.nb_prices.grid(column=1, row=11, columnspan=1)
 
         # for i in range(5):
+        self.grid_rowconfigure(2, weight=1)
         self.grid_rowconfigure(5, weight=1)
-        # self.grid_rowconfigure(6, weight=1)
         # self.grid_rowconfigure(7, weight=1)
         self.grid_rowconfigure(9, weight=1)
         for i in range(2):
@@ -96,17 +96,13 @@ class TableResults(LabelFrame):
     """Right frame of the GUI, giving the results of the already won prices"""
     def __init__(self, tk_frame, **kwargs):
         LabelFrame.__init__(self, tk_frame, text="Resultats", **kwargs)
-        self.names_title = Label(self, text="Nom")
-        self.names_title.grid(column=0, row=0)
-        self.names = Label(self, text="")
-        self.names.grid(column=0, row=1)
-        self.price_title = Label(self, text="Cadeau")
-        self.price_title.grid(column=1, row=0)
-        self.prices = Label(self, text="")
-        self.prices.grid(column=1, row=1)
+        self.names_title = Label(self, text="Nom", bg="#D3D3D3", relief=GROOVE, width=40)
+        self.names_title.grid(column=1, row=0)
+        self.price_title = Label(self, text="Cadeau", bg="#D3D3D3", relief=GROOVE, width=40)
+        self.price_title.grid(column=2, row=0)
 
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(3, weight=1)
 
 
 class FenetreTombola(Tk):
@@ -117,7 +113,7 @@ class FenetreTombola(Tk):
         self.list_names = []
         self.list_prices = []
         self.title("Tombola")
-        self.interface = InterfaceGauche(self, 10)
+        self.interface = InterfaceGauche(self)
         self.interface.grid(column=0, row=0)
         self.results = TableResults(self)
         self.results.grid(column=1, row=0)
@@ -135,38 +131,56 @@ class FenetreTombola(Tk):
         self.menubar.add_cascade(label="Menu", menu=self.menu1)
 
         self.menu2 = Menu(self.menubar, tearoff=0)
-        self.menu2.add_command(label="A propos", command=self.alert)
+        self.menu2.add_command(label="A propos", command=self.about)
         self.menubar.add_cascade(label="Aide", menu=self.menu2)
 
         self.config(menu=self.menubar)
 
     def draw_tombola(self, wait_time):
+        i = 1
+        label_name = []
+        label_price = []
         while len(self.list_prices) > 0:
+            # Get the next price and update left interface
             price = self.list_prices.pop(0)
             self.interface.price["text"] = price
             self.interface.name["text"] = ''
-            for i in range(wait_time):
+
+            # Wait before picking the winner
+            for second in range(wait_time):
                 self.interface.progress_bar.step()
                 self.interface.progress_bar.update()
                 time.sleep(1)
-            self.update()
-            time.sleep(0.25)
+
+            self.update()  # to test if it is still necessary
+            time.sleep(0.25)  # to test if it is still necessary
+
+            # Draw the name of the winner and update all the fields
             name, self.list_names = tombola.draw_name(self.list_names)
             self.interface.name["text"] = name
             self.interface.progress_bar['value'] = 0
             self.interface.name.update()
             time.sleep(0.25)
 
-            self.results.names["text"] += "%s\n" % name
-            self.results.prices["text"] += "%s\n" % price
+            # Add the result in the right panel
+            label_name.append(Label(self.results, text=name, relief=GROOVE, width=40))
+            label_name[i-1].grid(column=1, row=i)
+            label_price.append(Label(self.results, text=price, relief=GROOVE, width=40))
+            label_price[i-1].grid(column=2, row=i)
             self.interface.update_nb_players()
             self.interface.update_nb_prices()
             self.results.update()
+
+            # Write the results in the save file
             tombola.write_results('save.csv', name, price)
             time.sleep(0.25)
+            i += 1
 
-    def alert(self):
-        showinfo("Help", "I can't help you", parent=self)
+    def about(self):
+        showinfo("About",
+                 '''Tombola Python, Copyright (C) 2015 werdeil \n
+Tombola Python comes with ABSOLUTELY NO WARRANTY.\n
+This is free software, and you are welcome to redistribute it under certain conditions.''', parent=self)
         
     def load_names(self):
         """Returns an opened file in read mode."""
