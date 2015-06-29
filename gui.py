@@ -9,31 +9,32 @@ import tkFileDialog
 from tkMessageBox import showinfo, showerror
 import tombola
 import time
+import tkFont
 
 
 class InterfaceGauche(LabelFrame):
     """Left frame of the GUI, giving the buttons and the current price and winner"""
-    def __init__(self, tk_frame, **kwargs):
-        LabelFrame.__init__(self, tk_frame, text="Tirage", **kwargs)
+    def __init__(self, tk_frame, police, **kwargs):
+        LabelFrame.__init__(self, tk_frame, text="Tirage", font=police, **kwargs)
         self.waiting_time = 10
 
-        self.message = Label(self, text="Appuyez sur le bouton pour lancer le tirage")
+        self.message = Label(self, text="Appuyez sur le bouton pour lancer le tirage", font=police)
         self.message.grid(column=0, row=0, columnspan=2)
 
-        self.bouton_quitter = Button(self, text="Quitter", command=self.quit)
+        self.bouton_quitter = Button(self, text="Quitter", command=self.quit, font=police)
         self.bouton_quitter.grid(column=0, row=1, pady=10)
 
         self.bouton_cliquer = Button(self, text="Lancer!", fg="red",
-                                     command=self.click)
+                                     command=self.click, font=police)
         self.bouton_cliquer.grid(column=1, row=1)
 
-        self.message_price = Label(self, text="Tirage pour:")
-        self.price = Label(self, text='', bg="white", width=40, height=1)
+        self.message_price = Label(self, text="Tirage pour:", font=police)
+        self.price = Label(self, text='', bg="white", width=40, height=1, font=police)
         self.message_price.grid(column=0, row=3)
         self.price.grid(column=1, row=3, columnspan=1, padx=10, pady=10)
 
-        self.message_name = Label(self, text="Le gagnant est:")
-        self.name = Label(self, text="", bg="white", width=40, height=1)
+        self.message_name = Label(self, text="Le gagnant est:", font=police)
+        self.name = Label(self, text="", bg="white", width=40, height=1, font=police)
         self.message_name.grid(column=0, row=4)
         self.name.grid(column=1, row=4, columnspan=1, pady=10)
         
@@ -41,28 +42,30 @@ class InterfaceGauche(LabelFrame):
         self.parent = self._nametowidget(self.parent_name)
 
         # Part waiting time
-        self.interval = Label(self, text="Intervalle entre tirages (s)")
-        self.interval.grid(column=0, row=6, columnspan=1)
+        self.interval = Label(self, text="Intervalle entre tirages (s)", font=police)
+        self.interval.grid(column=0, row=6, columnspan=1, pady=10)
         self.v = StringVar()
         self.v.set(self.waiting_time)
-        self.interval_length = Entry(self, textvariable=self.v,  width=5, justify=CENTER)
+        self.interval_length = Entry(self, textvariable=self.v,  width=5, justify=CENTER, font=police)
         self.interval_length.grid(column=1, row=6, columnspan=1)
         self.progress_bar = Progressbar(self, length=300)
         self.progress_bar.grid(column=0, row=8, columnspan=2, pady=10)
-        self.nb_players_text = Label(self, text="Nombre de joueurs")
-        self.nb_players_text.grid(column=0, row=10, columnspan=1)
-        self.nb_players = Label(self, text="0")
-        self.nb_players.grid(column=1, row=10, columnspan=1)
-        self.nb_prices_text = Label(self, text="Nombre de prix restants")
-        self.nb_prices_text.grid(column=0, row=11, columnspan=1)
-        self.nb_prices = Label(self, text="0")
-        self.nb_prices.grid(column=1, row=11, columnspan=1)
+        self.nb_players_text = Label(self, text="Nombre de joueurs", font=police)
+        self.nb_players_text.grid(column=0, row=10, columnspan=1, pady=10)
+        self.nb_players = Label(self, text="0", font=police)
+        self.nb_players.grid(column=1, row=10, columnspan=1, pady=10)
+        self.nb_prices_text = Label(self, text="Nombre de prix restants", font=police)
+        self.nb_prices_text.grid(column=0, row=11, columnspan=1, pady=10)
+        self.nb_prices = Label(self, text="0", font=police)
+        self.nb_prices.grid(column=1, row=11, columnspan=1, pady=10)
 
+        # police=tkFont.Font(self, size=12)#, family='Courier')
+        # self.config(, font=police)
         # for i in range(5):
-        self.grid_rowconfigure(2, weight=1)
-        self.grid_rowconfigure(5, weight=1)
+        # self.grid_rowconfigure(2, weight=1)
+        # self.grid_rowconfigure(5, weight=1)
         # self.grid_rowconfigure(7, weight=1)
-        self.grid_rowconfigure(9, weight=1)
+        # self.grid_rowconfigure(9, weight=1)
         for i in range(2):
             self.grid_columnconfigure(i, weight=1)
 
@@ -94,11 +97,11 @@ class InterfaceGauche(LabelFrame):
 
 class TableResults(LabelFrame):
     """Right frame of the GUI, giving the results of the already won prices"""
-    def __init__(self, tk_frame, **kwargs):
-        LabelFrame.__init__(self, tk_frame, text="Resultats", **kwargs)
-        self.names_title = Label(self, text="Nom", bg="#D3D3D3", relief=GROOVE, width=40)
+    def __init__(self, tk_frame, police, **kwargs):
+        LabelFrame.__init__(self, tk_frame, text="Resultats", font=police, **kwargs)
+        self.names_title = Label(self, text="Nom", bg="#D3D3D3", relief=GROOVE, width=40, font=police)
         self.names_title.grid(column=1, row=0)
-        self.price_title = Label(self, text="Cadeau", bg="#D3D3D3", relief=GROOVE, width=40)
+        self.price_title = Label(self, text="Cadeau", bg="#D3D3D3", relief=GROOVE, width=40, font=police)
         self.price_title.grid(column=2, row=0)
 
         self.grid_columnconfigure(0, weight=1)
@@ -109,13 +112,13 @@ class FenetreTombola(Tk):
     """Main window containing the 2 frames"""
     def __init__(self, **kwargs):
         Tk.__init__(self, **kwargs)
-        # self.geometry("810x520")
+        self.police = tkFont.Font(self, size=9)
         self.list_names = []
         self.list_prices = []
         self.title("Tombola")
-        self.interface = InterfaceGauche(self)
+        self.interface = InterfaceGauche(self, self.police)
         self.interface.grid(column=0, row=0)
-        self.results = TableResults(self)
+        self.results = TableResults(self, self.police)
         self.results.grid(column=1, row=0)
         self.interface.pack(fill=BOTH, expand=1, side=LEFT)
         self.results.pack(fill=BOTH, expand=1, side=LEFT)
@@ -124,15 +127,15 @@ class FenetreTombola(Tk):
         self.menubar = Menu(self)
 
         self.menu1 = Menu(self.menubar, tearoff=0)
-        self.menu1.add_command(label="Importer joueurs", command=self.load_names)
-        self.menu1.add_command(label="Importer prix", command=self.load_prices)
+        self.menu1.add_command(label="Importer joueurs", command=self.load_names, font=self.police)
+        self.menu1.add_command(label="Importer prix", command=self.load_prices, font=self.police)
         self.menu1.add_separator()
-        self.menu1.add_command(label="Quitter", command=self.quit)
-        self.menubar.add_cascade(label="Menu", menu=self.menu1)
+        self.menu1.add_command(label="Quitter", command=self.quit, font=self.police)
+        self.menubar.add_cascade(label="Menu", menu=self.menu1, font=self.police)
 
         self.menu2 = Menu(self.menubar, tearoff=0)
-        self.menu2.add_command(label="A propos", command=self.about)
-        self.menubar.add_cascade(label="Aide", menu=self.menu2)
+        self.menu2.add_command(label="A propos", command=self.about, font=self.police)
+        self.menubar.add_cascade(label="Aide", menu=self.menu2, font=self.police)
 
         self.config(menu=self.menubar)
 
@@ -163,9 +166,9 @@ class FenetreTombola(Tk):
             time.sleep(0.25)
 
             # Add the result in the right panel
-            label_name.append(Label(self.results, text=name, relief=GROOVE, width=40))
+            label_name.append(Label(self.results, text=name, relief=GROOVE, width=40, font=self.police))
             label_name[i-1].grid(column=1, row=i)
-            label_price.append(Label(self.results, text=price, relief=GROOVE, width=40))
+            label_price.append(Label(self.results, text=price, relief=GROOVE, width=40, font=self.police))
             label_price[i-1].grid(column=2, row=i)
             self.interface.update_nb_players()
             self.interface.update_nb_prices()
